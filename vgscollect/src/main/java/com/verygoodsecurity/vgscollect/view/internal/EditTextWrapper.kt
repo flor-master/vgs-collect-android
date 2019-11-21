@@ -22,6 +22,8 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     private var vgsInputType: VGSTextInputType = VGSTextInputType.CardOwnerName
     private val state = VGSFieldState()
 
+    private var isPermitedTextWatcher = true
+
     private var activeTextWatcher: TextWatcher? = null
     internal var stateListener: OnVgsViewStateChangeListener? = null
         internal set(value) {
@@ -44,7 +46,7 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     init {
-//        isListeningPermitted = true
+        isPermitedTextWatcher = true
         onFocusChangeListener = OnFocusChangeListener { _, f ->
             state.isFocusable = f
             stateListener?.emit(id, state)
@@ -56,7 +58,7 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
             handler.removeCallbacks(inputStateRunnable)
             handler.postDelayed(inputStateRunnable, 500)
         }
-//        isListeningPermitted = false
+        isPermitedTextWatcher = false
         id = ViewCompat.generateViewId()
     }
 
@@ -70,13 +72,14 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     fun setFieldType(inputType: VGSTextInputType) {
+        isPermitedTextWatcher = true
         vgsInputType = inputType
         when(inputType) {
             is VGSTextInputType.CardNumber -> {
-//                applyNewTextWatcher(CardNumberTextWatcher)
-//                val filter = InputFilter.LengthFilter(inputType.length)
-//                filters = arrayOf(filter)
-//                setInputType(InputType.TYPE_CLASS_PHONE)
+                applyNewTextWatcher(CardNumberTextWatcher)
+                val filter = InputFilter.LengthFilter(inputType.length)
+                filters = arrayOf(filter)
+                setInputType(InputType.TYPE_CLASS_PHONE)
             }
             is VGSTextInputType.CVVCardCode -> {
                 applyNewTextWatcher(null)
@@ -98,6 +101,7 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
         }
         state.type = vgsInputType
         stateListener?.emit(id, state)
+        isPermitedTextWatcher = false
     }
 
     override fun setTag(tag: Any?) {
@@ -323,7 +327,7 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
 
 
     override fun addTextChangedListener(watcher: TextWatcher?) {
-        if(isPermited) {
+        if(isPermitedTextWatcher) {
             super.addTextChangedListener(watcher)
         }
     }
