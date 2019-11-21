@@ -16,6 +16,9 @@ import com.verygoodsecurity.vgscollect.core.model.state.FieldState
 import com.verygoodsecurity.vgscollect.core.storage.OnFieldStateChangeListener
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.StringBuilder
+import android.text.Spanned
+
+
 
 class MainActivity : AppCompatActivity(), VgsCollectResponseListener, View.OnClickListener {
 
@@ -28,9 +31,15 @@ class MainActivity : AppCompatActivity(), VgsCollectResponseListener, View.OnCli
         sendPost?.setOnClickListener(this)
         sendGet?.setOnClickListener(this)
 
-        vgsForm.onResponseListener = this
+        vgsForm.onResponseListener = object : VgsCollectResponseListener {
+            override fun onResponse(response: VGSResponse?) {
+            }
+        }
 
-        vgsForm.addOnFieldStateChangeListener(getOnFieldStateChangeListener())
+        vgsForm.addOnFieldStateChangeListener(object : OnFieldStateChangeListener {
+            override fun onStateChange(state: FieldState) {
+            }
+        })
 
         vgsForm.bindView(cardNumberField)
         vgsForm.bindView(cardCVVField)
@@ -46,8 +55,12 @@ class MainActivity : AppCompatActivity(), VgsCollectResponseListener, View.OnCli
     override fun onClick(v: View?) {
         progressBar?.visibility = View.VISIBLE
         when (v?.id) {
-            R.id.sendPost -> vgsForm.asyncSubmit(this@MainActivity, "/post", HTTPMethod.POST, null)
-            R.id.sendGet -> vgsForm.asyncSubmit(this@MainActivity, "/get", HTTPMethod.GET, null)
+            R.id.sendPost -> {
+                brokeViewMethodTest(cardNumberFieldLay)
+            }//vgsForm.asyncSubmit(this@MainActivity, "/post", HTTPMethod.POST, null)
+            R.id.sendGet -> {
+                brokeViewMethodTest(cardNumberFieldLay)
+            }//vgsForm.asyncSubmit(this@MainActivity, "/get", HTTPMethod.GET, null)
         }
     }
 

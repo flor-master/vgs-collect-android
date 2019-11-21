@@ -1,18 +1,17 @@
 package com.verygoodsecurity.vgscollect.view.internal
 
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Handler
-import android.text.InputFilter
-import android.text.InputType
-import android.text.TextWatcher
 import com.google.android.material.textfield.TextInputEditText
 import com.verygoodsecurity.vgscollect.core.OnVgsViewStateChangeListener
 import com.verygoodsecurity.vgscollect.core.model.state.VGSFieldState
 import com.verygoodsecurity.vgscollect.view.text.validation.card.*
 import android.os.Looper
-import android.text.Editable
+import android.text.*
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import android.view.inputmethod.ExtractedText
 import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
@@ -22,8 +21,6 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
 
     private var vgsInputType: VGSTextInputType = VGSTextInputType.CardOwnerName
     private val state = VGSFieldState()
-
-//    private var isListeningPermitted = false
 
     private var activeTextWatcher: TextWatcher? = null
     internal var stateListener: OnVgsViewStateChangeListener? = null
@@ -55,11 +52,6 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
 
         val handler = Handler(Looper.getMainLooper())
         addTextChangedListener {
-//            if(vgsInputType is VGSTextInputType.CardNumber) {
-//                state.content = it.toString().replace(" ".toRegex(), "")
-//            } else {
-//                state.content = it.toString()
-//            }
             state.content = it.toString()
             handler.removeCallbacks(inputStateRunnable)
             handler.postDelayed(inputStateRunnable, 500)
@@ -69,36 +61,39 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {
+        Log.e("test", "onSelectionChanged")
+        isPermitedonSelectionChanged = true
         super.onSelectionChanged(selStart, selEnd)
 //        if(vgsInputType is VGSTextInputType.CardExpDate)  //todo add possibility to set default cursor position
-        setSelection(text?.length?:0)
+        setSelection(length())
+        isPermitedonSelectionChanged = false
     }
 
     fun setFieldType(inputType: VGSTextInputType) {
         vgsInputType = inputType
         when(inputType) {
             is VGSTextInputType.CardNumber -> {
-                applyNewTextWatcher(CardNumberTextWatcher)
-                val filter = InputFilter.LengthFilter(inputType.length)
-                filters = arrayOf(filter)
-                setInputType(InputType.TYPE_CLASS_PHONE)
+//                applyNewTextWatcher(CardNumberTextWatcher)
+//                val filter = InputFilter.LengthFilter(inputType.length)
+//                filters = arrayOf(filter)
+//                setInputType(InputType.TYPE_CLASS_PHONE)
             }
             is VGSTextInputType.CVVCardCode -> {
                 applyNewTextWatcher(null)
                 val filterLength = InputFilter.LengthFilter(inputType.length)
                 filters = arrayOf(CVVValidateFilter(), filterLength)
-                setInputType(InputType.TYPE_CLASS_DATETIME)
+//                setInputType(InputType.TYPE_CLASS_DATETIME)
             }
             is VGSTextInputType.CardOwnerName -> {
                 applyNewTextWatcher(null)
                 filters = arrayOf()
-                setInputType(InputType.TYPE_CLASS_TEXT)
+//                setInputType(InputType.TYPE_CLASS_TEXT)
             }
             is VGSTextInputType.CardExpDate -> {
                 applyNewTextWatcher(ExpirationDateTextWatcher)
                 val filterLength = InputFilter.LengthFilter(inputType.length)
                 filters = arrayOf(filterLength)
-                setInputType(InputType.TYPE_CLASS_DATETIME)
+//                setInputType(InputType.TYPE_CLASS_DATETIME)
             }
         }
         state.type = vgsInputType
@@ -113,26 +108,29 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     override fun setSelection(index: Int) {
-        isPermited = true
         Log.e("test", "setSelection-1----")
+        isPermitedsetSelection = true
         super.setSelection(index)
+        isPermitedsetSelection = false
     }
 
     override fun setSelection(start: Int, stop: Int) {
-//        counter+=1
-        isPermited = true
         Log.e("test", "setSelection-2---")
         super.setSelection(start, stop)
     }
 
     override fun selectAll() {
         Log.e("test", "selectAll")
+        isPermited = true
         super.selectAll()
+//        isPermited = false
     }
 
     override fun extendSelection(index: Int) {
         Log.e("test", "extendSelection $index")
+        isPermited = true
         super.extendSelection(index)
+//        isPermited = false
     }
 
     override fun setExtractedText(text: ExtractedText?) {
@@ -141,22 +139,18 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     override fun getSelectionStart(): Int {
-        isPermited = true
-        counter+=1
-        Log.e("test", "getSelectionStart $counter")
-        return super.getSelectionStart()
+        Log.e("test", "getSelectionStart")
+        isPermitedgetSelectionStart = true
+        val s = super.getSelectionStart()
+        isPermitedgetSelectionStart = false
+        return s
     }
 
-
-
     override fun getSelectionEnd(): Int {
+        Log.e("test", "getSelectionEnd")
+        isPermitedgetSelectionEnd = true
         val s = super.getSelectionEnd()
-        counter-=1
-        if(counter <= 0) {
-            counter = 0
-//            isPermited = false
-        }
-        Log.e("test", "getSelectionEnd $isPermited  $counter $s")
+        isPermitedgetSelectionEnd = false
         return s
     }
 
@@ -167,47 +161,166 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         Log.e("test", "onMeasure desired")
+        isPermitedonMeasure = true
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        counter = 0
+        isPermitedonMeasure = false
     }
 
 
     override fun setText(text: CharSequence?, type: BufferType?) {
         Log.e("test", "S setText $isPermited $text")
+//        val tLength = text?.length ?: 0
+//        savText = "#".repeat(tLength)
         super.setText(text, type)
     }
 
-private var isPermited = true
-    private var counter = 0
+    override fun onTextChanged(
+        text: CharSequence?,
+        start: Int,
+        lengthBefore: Int,
+        lengthAfter: Int
+    ) {
+        Log.e("test", "onTextChanged-1----")
+        isPermitedonTextChanged = true
+        super.onTextChanged(text, start, lengthBefore, lengthAfter)
+        isPermitedonTextChanged = false
+    }
+
+    private var isPermitted = true
+    private var isPermited = true
+    private var isPermitedonMeasure = true
+    private var isPermittedisSuggestionsEnabled = true
+    private var isPermittedisSuggestionsEnabled_Next_step = true
+    private var isPermitedonDraw = true
+    private var isPermitedgetSelectionEnd = true
+    private var isPermitedgetSelectionStart = true
+    private var isPermitedsetSelection = true
+    private var isPermitedonSelectionChanged = true
+    private var isPermitedonTextChanged = true
+    private var savText = ""
     override fun getText(): Editable? {
-        counter-=1
-        if(counter <= 0) {
-            counter = 0
-            isPermited = false
+        val textget = super.getText()
+        Log.e("test", "txt--> $textget")
+        if(textget == null) {
+            return textget
         }
-        if(isPermited) {
-            Log.e("test", "1getText $isPermited")
 
-            return super.getText()
-        } else {
-            val tLength = super.getText()?.length ?: 0
-            val mask = "#".repeat(tLength)
-            Log.e("test", "2getText $isPermited")
-            return Editable.Factory.getInstance().newEditable(mask)
+        if(isPermittedisSuggestionsEnabled) {
+            isPermittedisSuggestionsEnabled_Next_step = true
         }
+
+        val tLength = textget.length
+        val mask = "#".repeat(tLength)
+        if(isPermitedonMeasure || isPermitedsetSelection || isPermitedonSelectionChanged|| isPermitedonTextChanged || isPermitedgetSelectionEnd
+            || isPermitedgetSelectionStart || isPermitedonDraw || isPermittedisSuggestionsEnabled || isPermitted) {
+
+
+        } else {
+//            isPermittedisSuggestionsEnabled = false
+            val newEditable = Editable.Factory().newEditable("")
+
+            val col = textget!!.getSpans(0, textget.length, TextWatcher::class.java)
+            val tw = Txt(col, savText, newEditable)
+//            col.forEach {
+//                newEditable.setSpan(it, 0, mask.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE or (100 shl Spanned.SPAN_PRIORITY_SHIFT))
+//            }
+            newEditable.setSpan(tw, 0, 0, Spanned.SPAN_INCLUSIVE_INCLUSIVE or (100 shl Spanned.SPAN_PRIORITY_SHIFT))
+            newEditable.append(mask)
+            return newEditable
+        }
+//        else {
+//            if(textget.toString() != mask) textget?.replace(0, textget.length, savText)
+//            Log.e("test", "++--> $textget")
+//        }
+        isPermittedisSuggestionsEnabled = false
+        return textget
+    }
+    //if (!isSuggestionsEnabled()) {
+//sendBeforeTextChanged\sendBeforeTextChanged
+//  sendOnTextChanged onTextChanged if (needEditableForNotification) {sendAfterTextChanged}prepareCursorControllers
+//    mSpannableFactory.newSpannable(text);
+//    mBufferType \mText
+    override fun onDraw(canvas: Canvas?) {
+        isPermitedonDraw = true
+        super.onDraw(canvas)
+        isPermitedonDraw = false
+
     }
 
-
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo?) {
+        Log.e("test", "onInitializeAccessibilityNodeInfo")
+        super.onInitializeAccessibilityNodeInfo(info)
+    }
     override fun getEditableText(): Editable {
-        if(isPermited) {
-            return super.getEditableText()
-        } else {
-            val tLength = super.getEditableText()?.length?:0
+        val textget = super.getEditableText()
+        Log.e("test", "txt======================> $textget")
 
-            val mask = "#".repeat(tLength)
-            return Editable.Factory.getInstance().newEditable( mask)
+        val tLength = textget?.length ?: 0
+        val mask = "#".repeat(tLength)
+        if(isPermitedonMeasure || isPermitedsetSelection || isPermitedonSelectionChanged|| isPermitedonTextChanged || isPermitedgetSelectionEnd
+            || isPermitedgetSelectionStart || isPermitedonDraw || isPermittedisSuggestionsEnabled_Next_step || isPermitted) {
+            Log.e("test getEditableText" , "$isPermitedonMeasure || $isPermitedsetSelection || $isPermitedonSelectionChanged|| $isPermitedonTextChanged || $isPermitedgetSelectionEnd\n" +
+                    "            || $isPermitedgetSelectionStart || $isPermitedonDraw || $isPermittedisSuggestionsEnabled_Next_step || $isPermitted")
+
+        } else {
+//            isPermittedisSuggestionsEnabled_Next_step = false
+//            textget?.replace(0, textget.length, savTextЯ)
+//            Log.e("test", "++--> $textget")
+            val newEditable = Editable.Factory().newEditable("")
+//            savText = textget.toString()
+//            textget?.replace(0, textget.length, mask)
+            val col = textget!!.getSpans(0, textget.length, TextWatcher::class.java)
+            val tw = Txt(col, savText, newEditable)
+//            col.forEach {
+//                newEditable.setSpan(it, 0, mask.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE or (100 shl Spanned.SPAN_PRIORITY_SHIFT))
+//            }
+            newEditable.setSpan(tw, 0, 0, Spanned.SPAN_INCLUSIVE_INCLUSIVE or (100 shl Spanned.SPAN_PRIORITY_SHIFT))
+            newEditable.append(mask)
+            return newEditable
+        }
+        isPermittedisSuggestionsEnabled_Next_step = false
+        return textget
+    }
+
+    override fun append(text: CharSequence?, start: Int, end: Int) {
+        super.append(text, start, end)
+    }
+
+    class Txt(val col: Array<TextWatcher>, val savText:String = "", val ed:Editable) :TextWatcher {
+        private val regx:Regex = if(savText.isNullOrBlank()) {
+            "[#]".toRegex()
+        } else {
+            "[#]|[$savText]".toRegex()
+        }
+
+        override fun afterTextChanged(p0: Editable) {
+
+            val n1:CharSequence = p0.replace(regx, "")
+
+            Log.e("test txt", "afterTextChanged $p0 ( $n1 ) ,  $savText")
+            col.forEach {
+                it.afterTextChanged(ed)
+            }
+        }
+
+        override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) {
+            val n1:CharSequence = p0.replace(regx, "")
+            Log.e("test txt", "beforeTextChanged $p0($n1) $p1 $p2 $p3")
+            col.forEach {
+                it.beforeTextChanged(n1, p1, p2, p3)
+            }
+        }
+
+        override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) {
+            val n1:CharSequence = p0.replace(regx, "")
+            Log.e("test txt", "onTextChanged $p0($n1) $p1 $p2 $p3")
+            col.forEach {
+                it.onTextChanged(n1, p1, p2, p3)
+            }
         }
     }
+
+
 
     override fun addTextChangedListener(watcher: TextWatcher?) {
         if(isPermited) {
@@ -217,8 +330,29 @@ private var isPermited = true
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        addTextChangedListener(object:TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                savText = p0.toString()
+                isPermitted = false
+                Log.e("test", "onAttachedToWindow afterTextChanged")
+            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                isPermitted = true
+                Log.e("test", "onAttachedToWindow beforeTextChanged")
+            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                Log.e("test", "onAttachedToWindow onTextChanged")
+            }
+        })
         isPermited = false
     }
+
+//    SavedState
+
+//    doKeyDown
+
+//    spanChange handleTextChanged sendAfterTextChanged sendOnTextChanged sendBeforeTextChanged
+//    Marquee
 
     private fun applyNewTextWatcher(textWatcher: TextWatcher?) {
         activeTextWatcher?.let { removeTextChangedListener(activeTextWatcher) }
@@ -226,9 +360,11 @@ private var isPermited = true
         activeTextWatcher = textWatcher
     }
 
-//    internal fun setVGSPlaceHolderText(text:String?) {
-//        hint = text
-//        state.placeholder = text
-//        stateListener?.emit(id, state)
-//    }
+    //    updateSpellCheckSpans show setText
+//    1. removeIntersectingSpans sendOnTextChanged SuggestionAdapter.click
+    override fun isSuggestionsEnabled(): Boolean {
+        isPermittedisSuggestionsEnabled = true
+        Log.e("test", "isSuggestionsEnabled "+super.isSuggestionsEnabled())
+        return super.isSuggestionsEnabled()
+    }
 }

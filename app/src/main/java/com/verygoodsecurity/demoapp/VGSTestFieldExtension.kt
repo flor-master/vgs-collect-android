@@ -22,10 +22,12 @@ fun brokeViewMethodTest(v: View) {
 }
 
 private fun hackView(v: EditText) {
-    Log.e("test", "getText: ${v.text}")
+    Log.e("test hackView", "toString: ${v.toString()}")
+    Log.e("test hackView", "getText: ${v.text}")
+    Log.e("test hackView", "getEditableText: ${v.editableText}")
     v.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
-            Log.e("test", "hackedView: $p0")
+            Log.e("test hackView", "hackedView: $p0")
         }
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

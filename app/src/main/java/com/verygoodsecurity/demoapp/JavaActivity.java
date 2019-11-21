@@ -18,7 +18,6 @@ import com.verygoodsecurity.vgscollect.widget.VGSEditText;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class JavaActivity extends Activity implements View.OnClickListener, VgsCollectResponseListener, OnFieldStateChangeListener {
@@ -35,14 +34,24 @@ public class JavaActivity extends Activity implements View.OnClickListener, VgsC
         findViewById(R.id.sendGet).setOnClickListener(this);
         findViewById(R.id.sendPost).setOnClickListener(this);
 
-        vgsForm.addOnResponseListeners(this);
+        vgsForm.addOnResponseListeners(new VgsCollectResponseListener() {
+            @Override
+            public void onResponse(VGSResponse response) {
+                // your code
+            }
+        });
 
-        vgsForm.addOnFieldStateChangeListener(this);
+        vgsForm.addOnFieldStateChangeListener(new OnFieldStateChangeListener() {
+            @Override
+            public void onStateChange(@NotNull FieldState state) {
+                // your code
+            }
+        });
 
         responseView = findViewById(R.id.responseView);
 
-        View cardNumberField = findViewById(R.id.cardNumberField);
-        vgsForm.bindView((VGSEditText) cardNumberField);
+        VGSEditText cardNumberField = findViewById(R.id.cardNumberField);
+        vgsForm.bindView(cardNumberField);
         View cardCVVField = findViewById(R.id.cardCVVField);
         vgsForm.bindView((VGSEditText) cardCVVField);
         View cardHolderField = findViewById(R.id.cardHolderField);
@@ -54,7 +63,7 @@ public class JavaActivity extends Activity implements View.OnClickListener, VgsC
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.sendGet: vgsForm.asyncSubmit(this, "/get", HTTPMethod.GET, null);
+            case R.id.sendGet: vgsForm.asyncSubmit(this, "/get", HTTPMethod.GET, (Map<String, String>)view);
             case R.id.sendPost: vgsForm.asyncSubmit(this, "/post", HTTPMethod.POST, null);
         }
     }
