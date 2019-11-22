@@ -1,0 +1,31 @@
+apply from: 'src/version.gradle'
+
+ext {
+    bintrayRepo = 'vgs-collect-android'
+    bintrayName = 'vgscollect'
+
+    publishedGroupId = 'com.verygoodsecurity'
+    artifact = 'vgscollect'
+    libraryVersion = project.globalVersionName
+
+    libraryName = 'VGS Collect'
+    libraryDescription = 'VGS Collect mobile SDKs - are native mobile forms modules that allow customers to collect information securely on mobile Android devices'
+
+    siteUrl = 'https://github.com/verygoodsecurity/vgs-collect-android'
+    gitUrl = 'https://github.com/verygoodsecurity/vgs-collect-android.git'
+
+    developerId = 'dmytro'
+    developerName = 'Dmytro'
+    developerEmail = 'dmitriy.kosolapenko@verygoodsecurity.com'
+
+    licenseName = 'MIT License'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT License"]
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    bintrayUsername = properties.getProperty('bintray.BINTRAY_USERNAME')
+    bintrayUserOrg = properties.getProperty('bintray.BINTRAY_ORG')
+    bintrayApiKey = properties.getProperty('bintray.BINTRAY_API_KEY')
+}
