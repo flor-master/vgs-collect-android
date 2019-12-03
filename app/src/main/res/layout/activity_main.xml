@@ -40,6 +40,8 @@
             android:id="@+id/cardNumberFieldLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:boxBackgroundModes="outline"
+            app:boxCornerRadius="@dimen/default_margin"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin">
             <com.verygoodsecurity.vgscollect.widget.VGSCardNumberEditText
@@ -50,7 +52,7 @@
                 app:isRequired="false"
                 app:textColor="@color/black"
                 app:singleLine="true"
-                app:textSize="12dp"
+                app:textSize="14dp"
                 app:cardPreview="right"
                 app:text="4111111111111111"
                 app:fieldType="cardNumber"/>
@@ -129,7 +131,7 @@
 
     <ScrollView
         android:id="@+id/state"
-        android:layout_width="50dp"
+        android:layout_width="150dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description"

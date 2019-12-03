@@ -13,6 +13,7 @@ import com.verygoodsecurity.vgscollect.core.OnVgsViewStateChangeListener
 import com.verygoodsecurity.vgscollect.core.model.state.VGSFieldState
 import com.verygoodsecurity.vgscollect.view.text.validation.card.*
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -24,7 +25,7 @@ import com.verygoodsecurity.vgscollect.view.text.validation.card.VGSEditTextFiel
 
 internal class EditTextWrapper(context: Context): TextInputEditText(context) {
 
-    private var vgsFieldType: VGSEditTextFieldType? = null
+    var vgsFieldType: VGSEditTextFieldType? = null
     private val state = VGSFieldState()
 
     private var isListeningPermitted = false
@@ -67,7 +68,7 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
         addTextChangedListener {
             state.content = it.toString()
             handler.removeCallbacks(inputStateRunnable)
-            handler.postDelayed(inputStateRunnable, 300)
+            handler.postDelayed(inputStateRunnable, 30)
         }
         isListeningPermitted = false
         id = ViewCompat.generateViewId()
@@ -226,10 +227,9 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
     }
 
     private fun updateCompoundCardPreview() {
-        var l: Drawable? = null
-        var r: Drawable? = null
-
         if (vgsFieldType is VGSEditTextFieldType.CardNumber) {
+            var l: Drawable? = null
+            var r: Drawable? = null
             val str = text.toString().replace(" ", "")
             var privaryRes = 0
             val v = CardType.values()
@@ -253,8 +253,8 @@ internal class EditTextWrapper(context: Context): TextInputEditText(context) {
             val cIconHeight = resources.getDimension(R.dimen.c_icon_height).toInt()
             r?.setBounds(0, 0, cIconWidth, cIconHeight)
             l?.setBounds(0, 0, cIconWidth, cIconHeight)
+            setCompoundDrawables(l,null,r,null)
         }
-        setCompoundDrawables(l,null,r,null)
     }
 
     fun setCardPreviewIconGravity(gravity:Int) {

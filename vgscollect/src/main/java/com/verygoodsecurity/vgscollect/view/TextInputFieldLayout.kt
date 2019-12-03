@@ -2,6 +2,7 @@ package com.verygoodsecurity.vgscollect.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
@@ -121,12 +122,21 @@ abstract class TextInputFieldLayout @JvmOverloads constructor(
 
     open fun setError(errorText:CharSequence?) {
         textInputLayout.error = errorText
+        textInputLayout.setBackgroundColor(Color.WHITE)
     }
 
     open fun getHint() = textInputLayout.hint
 
     open fun setHint(text:String?) {
         textInputLayout.hint = text
+    }
+
+    open fun setHintEnabled(state:Boolean) {
+        textInputLayout.isHintEnabled = state
+    }
+
+    open fun setHintAnimationEnabled(state:Boolean) {
+        textInputLayout.isHintAnimationEnabled = state
     }
 
     open fun setPasswordToggleEnabled(isEnabled:Boolean) {

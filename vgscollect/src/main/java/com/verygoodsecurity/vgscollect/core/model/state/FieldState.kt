@@ -12,6 +12,9 @@ sealed class FieldState {
     var fieldName:String = ""
         internal set
 
+    var content:String? = ""
+    var icon:Int = 0
+
     class CardNumberState(
         content: String?,
         type: String

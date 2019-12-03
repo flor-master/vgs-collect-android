@@ -2,7 +2,9 @@ package com.verygoodsecurity.vgscollect.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Parcel
 import android.text.TextUtils
@@ -17,6 +19,7 @@ import android.view.ViewGroup
 import com.verygoodsecurity.vgscollect.core.OnVgsViewStateChangeListener
 import com.verygoodsecurity.vgscollect.view.internal.EditTextWrapper
 import com.verygoodsecurity.vgscollect.view.text.validation.card.FieldType
+import com.verygoodsecurity.vgscollect.view.text.validation.card.VGSEditTextFieldType
 
 abstract class InputFieldView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -128,6 +131,7 @@ abstract class InputFieldView @JvmOverloads constructor(
         }
     }
 
+    private var bgDraw:Drawable? = null
     override fun onAttachedToWindow() {
         if(isAttachPermitted) {
             super.onAttachedToWindow()
@@ -136,7 +140,18 @@ abstract class InputFieldView @JvmOverloads constructor(
                 addView(inputField)
             }
             inputField.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            inputField.setHasBackground(background != null)
+
+            bgDraw = background
+            setBackgroundColor(Color.TRANSPARENT)
+            if(background != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    inputField.background = bgDraw
+                } else {
+                    inputField.setBackgroundDrawable(bgDraw)
+                }
+            }
+//            inputField.setHasBackground(background != null)
+
             isAttachPermitted = false
         }
     }
@@ -340,4 +355,11 @@ abstract class InputFieldView @JvmOverloads constructor(
         }
     }
 
+    fun validate():Boolean {
+        return if(inputField.vgsFieldType is VGSEditTextFieldType.CardNumber) {
+            inputField.text?.length?:0 < 10
+        } else {
+            true
+        }
+    }
 }

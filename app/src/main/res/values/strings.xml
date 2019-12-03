@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VGSCollectDemo</string>
+    <string name="app_name">Add new card</string>
     <string name="demo_description">Collecting credit card data</string>
 
     <string name="cvc">CVC</string>

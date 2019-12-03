@@ -31,23 +31,23 @@ sealed class CreditCardType {
 
     object Elo:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
     object VisaElectron:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
     object Maestro:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
     object Forbrugsforeningen:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
     object Dankort:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
 
     object Visa : CreditCardType() {
@@ -67,7 +67,7 @@ sealed class CreditCardType {
 
     object Hipercard :CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
 
     object DinClub:CreditCardType() {
@@ -81,7 +81,7 @@ sealed class CreditCardType {
 
     object UnionPay:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
 
     object Jcb:CreditCardType() {
@@ -91,11 +91,11 @@ sealed class CreditCardType {
 
     object Laser:CreditCardType() {
         override val validationPattern: String
-            get() = ""
+            get() = "^"
     }
     object Unknown:CreditCardType() {
         override val validationPattern: String
-            get() = "^\\b\$"
+            get() = "^"
     }
 
 }

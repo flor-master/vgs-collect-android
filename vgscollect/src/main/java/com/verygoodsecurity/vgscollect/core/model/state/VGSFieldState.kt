@@ -20,11 +20,60 @@ data class VGSFieldState(var isFocusable:Boolean = false,
 fun VGSEditTextFieldType.mapVGSTextInputTypeToFieldState(content: String? = null):FieldState {
     return when(this) {
         is VGSEditTextFieldType.CardNumber -> {
-            FieldState.CardNumberState(content, this.card.name)
+            val c = FieldState.CardNumberState(content, this.card.name)
+            if(content != null) {
+                val str = if(content.length <= 7) {
+                    content
+                } else if (content.length < 15) {
+                    val bin = content.run {
+                        if(length >= 7) {
+                            substring(0, 7)
+                        } else {
+                            substring(0, length)
+                        }
+                    }
+                    val dif = content.length - bin.length
+                    if(dif > 0) {
+                        val ss = "#".repeat(dif)
+                        bin + ss
+                    } else {
+                        bin
+                    }
+                } else {
+                    val bin = content.run {
+                        if(length >= 7) {
+                            substring(0, 7)
+                        } else {
+                            substring(0, length)
+                        }
+                    }
+                    val dif = 15 - 8
+                    if(dif > 0) {
+                        val ss = "#".repeat(dif)
+                        bin + ss + " "+c.last4
+                    } else {
+                        bin
+                    }
+                }
+                c.content = str
+            }
+            c
         }
-        is VGSEditTextFieldType.CardHolderName -> FieldState.CardName
-        is VGSEditTextFieldType.CVCCardCode -> FieldState.CVCState
-        is VGSEditTextFieldType.CardExpDate -> FieldState.CardExpirationDate
+        is VGSEditTextFieldType.CardHolderName -> {
+            val c = FieldState.CardName
+            c.content = content
+            c
+        }
+        is VGSEditTextFieldType.CVCCardCode -> {
+            val c = FieldState.CVCState
+            c.content = content
+            c
+        }
+        is VGSEditTextFieldType.CardExpDate -> {
+            val c = FieldState.CardExpirationDate
+            c.content = content
+            c
+        }
         is VGSEditTextFieldType.Info -> FieldState.Info
     }
 }

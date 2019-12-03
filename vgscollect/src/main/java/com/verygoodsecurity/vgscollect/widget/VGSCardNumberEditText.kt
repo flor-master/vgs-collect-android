@@ -29,4 +29,5 @@ class VGSCardNumberEditText @JvmOverloads constructor(
     fun setCardPreviewIconGravity(gravity:Int) {
         applyCardIconGravity(gravity)
     }
+
 }

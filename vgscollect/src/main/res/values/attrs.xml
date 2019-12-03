@@ -85,6 +85,8 @@
 
     <declare-styleable name="VGSTextInputLayout">
         <attr name="hint" />
+        <attr name="hintEnabled" format="boolean"/>
+        <attr name="hintAnimationEnabled" format="boolean"/>
         <attr name="passwordToggleEnabled" format="boolean"/>
         <attr name="passwordToggleTint" format="color"/>
         <attr name="passwordToggleDrawable" format="reference"/>
@@ -102,6 +104,7 @@
         <attr name="boxCornerRadiusTopStart" format="dimension"/>
         <attr name="boxCornerRadiusBottomStart" format="dimension"/>
         <attr name="boxCornerRadiusTopEnd" format="dimension"/>
+        <attr name="boxCornerRadius" format="dimension"/>
 
 <!--        app:boxStrokeWidth="2dp"-->
 <!--        app:boxBackgroundMode="outline"-->
