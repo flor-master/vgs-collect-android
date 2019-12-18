@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  prepare:
     working_directory: ~/code
     docker:
       - image: circleci/android:api-28
@@ -19,25 +19,57 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+
+  runUnitTest:
+    - steps:
       - run:
-          name: Run Lint
-          command: ./gradlew lintDebug
-      - run:
-          name: Run Unit Tests
-          command: ./gradlew testDebugUnitTest
-      - run:
-          name: Build Debug
-          command: ./gradlew assembleDebug
-      - store_artifacts:
-          path: app/build/outputs/apk/debug/app-debug.apk
-          destination: app-debug.apk
+        name: Run Lint
+        command: ./gradlew lintDebug
+          - run:
+              name: Run Unit Tests
+              command: ./gradlew testDebugUnitTest
+          - run:
+              name: Build Debug
+              command: ./gradlew assembleDebug
+          - store_artifacts:
+              path: app/build/outputs/apk/debug/app-debug.apk
+              destination: app-debug.apk
+
+#  build:
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+#      - run:
+#          name: Download Dependencies
+#          command: |
+#            sudo chmod +x gradlew
+#            ./gradlew androidDependencies
+#      - save_cache:
+#          paths:
+#            - ~/.gradle
+#          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+#      - run:
+#          name: Run Lint
+#          command: ./gradlew lintDebug
+#      - run:
+#          name: Run Unit Tests
+#          command: ./gradlew testDebugUnitTest
+#      - run:
+#          name: Build Debug
+#          command: ./gradlew assembleDebug
+#      - store_artifacts:
+#          path: app/build/outputs/apk/debug/app-debug.apk
+#          destination: app-debug.apk
 workflows:
   version: 2
   main:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-              - master
-              - bintray
+      - prepare:
+      - runUnitTest:
+#      - build:
+#          filters:
+#            branches:
+#              only:
+#              - master
+#              - bintray
