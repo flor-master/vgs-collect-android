@@ -16,7 +16,7 @@ ext {
 
     developerId = 'dmytro'
     developerName = 'Dmytro'
-    developerEmail = 'dmitriy.kosolapenko@verygoodsecurity.com'
+    developerEmail = 'dmitriy.kosolapenko@vgs.io'
 
     licenseName = 'MIT License'
     licenseUrl = 'https://opensource.org/licenses/MIT'
@@ -25,7 +25,10 @@ ext {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-    bintrayUsername = properties.getProperty('bintray.BINTRAY_USERNAME')
-    bintrayUserOrg = properties.getProperty('bintray.BINTRAY_ORG')
-    bintrayApiKey = properties.getProperty('bintray.BINTRAY_API_KEY')
+//    bintrayUsername = properties.getProperty('bintray.BINTRAY_USERNAME')
+//    bintrayUserOrg = properties.getProperty('bintray.BINTRAY_ORG')
+//    bintrayApiKey = properties.getProperty('bintray.BINTRAY_API_KEY')
+    bintrayUsername = properties.getProperty('dmitriy.kosolapenko')
+    bintrayUserOrg = properties.getProperty('vg')
+    bintrayApiKey = properties.getProperty('e18a5945eb0a4387b145360e807fcb3236120e68')
 }
