@@ -5,8 +5,8 @@ machine-setup: &machine-setup
   machine:
     enabled: true
     image: circleci/android:api-28
-environment: &environment-setup
-  JVM_OPTS: -Xmx3200m
+environment-setup: &environment-setup
+  environment: JVM_OPTS: -Xmx3200m
 
 jobs:
   prepare:
