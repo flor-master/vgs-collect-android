@@ -21,19 +21,16 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 
   runUnitTest:
-    - steps:
+    steps:
       - run:
-        name: Run Lint
-        command: ./gradlew lintDebug
-          - run:
-              name: Run Unit Tests
-              command: ./gradlew testDebugUnitTest
-          - run:
-              name: Build Debug
-              command: ./gradlew assembleDebug
-          - store_artifacts:
-              path: app/build/outputs/apk/debug/app-debug.apk
-              destination: app-debug.apk
+          name: Run Lint
+          command: ./gradlew lintDebug
+      - run:
+          name: Run Unit Tests
+          command: ./gradlew testDebugUnitTest
+      - run:
+          name: Build Debug
+          command: ./gradlew assembleDebug
 
 #  build:
 #    steps:
