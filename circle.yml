@@ -1,11 +1,18 @@
 version: 2.1
+job-defaults: &job-defaults
+  working_directory: ~/code
+machine-setup: &machine-setup
+  machine:
+    enabled: true
+    image: circleci/android:api-28
+environment: &environment-setup
+  JVM_OPTS: -Xmx3200m
+
 jobs:
   prepare:
-    working_directory: ~/code
-    docker:
-      - image: circleci/android:api-28
-    environment:
-      JVM_OPTS: -Xmx3200m
+    <<: *job-defaults
+    <<: *machine-setup
+    <<: *environment-setup
     steps:
       - checkout
       - restore_cache:
@@ -21,16 +28,19 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 
   runUnitTest:
+    <<: *job-defaults
+    <<: *machine-setup
+    <<: *environment-setup
     steps:
-      - run:
-          name: Run Lint
-          command: ./gradlew lintDebug
-      - run:
-          name: Run Unit Tests
-          command: ./gradlew testDebugUnitTest
-      - run:
-          name: Build Debug
-          command: ./gradlew assembleDebug
+        - run:
+            name: Run Lint
+            command: ./gradlew lintDebug
+        - run:
+            name: Run Unit Tests
+            command: ./gradlew testDebugUnitTest
+        - run:
+            name: Build Debug
+            command: ./gradlew assembleDebug
 
 #  build:
 #    steps:
