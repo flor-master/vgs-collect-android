@@ -5,14 +5,13 @@ machine-setup: &machine-setup
   machine:
     enabled: true
     image: circleci/android:api-28
-environment-setup: &environment-setup
-  environment: JVM_OPTS: -Xmx3200m
+
 
 jobs:
   prepare:
     <<: *job-defaults
     <<: *machine-setup
-    <<: *environment-setup
+    environment: JVM_OPTS: -Xmx3200m
     steps:
       - checkout
       - restore_cache:
@@ -30,7 +29,7 @@ jobs:
   runUnitTest:
     <<: *job-defaults
     <<: *machine-setup
-    <<: *environment-setup
+    environment: JVM_OPTS: -Xmx3200m
     steps:
         - run:
             name: Run Lint
