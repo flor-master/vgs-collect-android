@@ -1,55 +1,10 @@
 version: 2.1
 
-job-defaults: &job-defaults
-  working_directory: &working_directory
-      ~/code
-  attach_workspace: &attach_workspace
-      attach_workspace:
-       at: *working_directory
-  machine-setup: &machine-setup
-    machine:
-      enabled: true
-      image: circleci/android:api-28
-
 jobs:
   prepare:
-    <<: *job-defaults
-    <<: *machine-setup
-    environment:
-        JVM_OPTS: -Xmx3200m
-    steps:
-      - checkout
-      - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
-      - run:
-          name: Download Dependencies
-          command: |
-            sudo chmod +x gradlew
-            ./gradlew androidDependencies
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-
-  runUnitTest:
-    <<: *job-defaults
-    <<: *machine-setup
-    environment:
-        JVM_OPTS: -Xmx3200m
-    steps:
-        - run:
-            name: Run Lint
-            command: ./gradlew lintDebug
-        - run:
-            name: Run Unit Tests
-            command: ./gradlew testDebugUnitTest
-        - run:
-            name: Build Debug
-            command: ./gradlew assembleDebug
-
-  build:
-    <<: *job-defaults
-    <<: *machine-setup
+    working_directory: ~/code
+      docker:
+          - image: circleci/android:api-28
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
@@ -65,6 +20,49 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+
+  runUnitTest:
+    working_directory: ~/code
+      docker:
+          - image: circleci/android:api-28
+      environment:
+        JVM_OPTS: -Xmx3200m
+    steps:
+        - run:
+            name: Run Lint
+            command: ./gradlew lintDebug
+        - run:
+            name: Run Unit Tests
+            command: ./gradlew testDebugUnitTest
+        - run:
+            name: Build Debug
+            command: ./gradlew assembleDebug
+
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-28
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: |
+            sudo chmod +x gradlew
+            ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Run Lint
+          command: ./gradlew lintDebug
+      - run:
+          name: Run Unit Tests
+          command: ./gradlew testDebugUnitTest
       - run:
           name: Build Debug
           command: ./gradlew assembleDebug
