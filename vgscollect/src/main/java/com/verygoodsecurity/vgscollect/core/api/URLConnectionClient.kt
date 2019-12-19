@@ -126,7 +126,7 @@ internal class URLConnectionClient:ApiClient {
             }
 
         } catch (e: Exception) {
-            response = VGSResponse.ErrorResponse("couldn't connect to server")  //fixme
+            response = VGSResponse.ErrorResponse("Can't connect to server.")  //fixme
             Logger.e("VGSCollect", e.localizedMessage)
         }
         conn?.disconnect()
