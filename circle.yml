@@ -4,10 +4,10 @@ version: 2.1
 jobs:
   prepare:
     working_directory: ~/code
-      docker:
-          - image: circleci/android:api-28
-      environment:
-        JVM_OPTS: -Xmx3200m
+    docker:
+      - image: circleci/android:api-28
+    environment:
+      JVM_OPTS: -Xmx3200m
     steps:
       - checkout
       - restore_cache:
